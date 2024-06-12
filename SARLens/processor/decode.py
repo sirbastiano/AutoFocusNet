@@ -32,6 +32,14 @@ def split_radar_data(radar_data, L0_name, output_folder, num_chunks: int = 10):
             picklesaver(outpath, chunk)
         return None
 
+def decoder(inputfile, burst_n):
+    l0file = sentinel1decoder.Level0File(inputfile)
+    ephemeris = l0file.ephemeris
+    metadata = l0file.get_burst_metadata(burst_n)
+    radar_data = l0file.get_burst_data(burst_n)
+    return {'echo':radar_data, 'metadata':metadata, 'ephemeris':ephemeris}
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-i', '--inputfile', type=str, help='Path to input .dat file', default=None)

@@ -141,3 +141,6 @@ DATA/*
 
 # Configuration
 *.ini
+
+
+*.pkl
