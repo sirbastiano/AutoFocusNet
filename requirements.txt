@@ -1,2 +1,4 @@
-asf_search
-pandas
+asf_search==7.1.2
+pandas==2.2.2
+rasterio==1.2.10
+matplotlib
