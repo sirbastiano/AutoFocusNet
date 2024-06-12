@@ -2,9 +2,15 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import numpy as np
 import os 
-import zarr 
 from matplotlib import colors
 import torch
+import pickle
+import rasterio
+
+try:
+    import zarr 
+except:
+    print('Zarr packet not installed. Zarr functionalities will not work.')
 
 def plot_with_logscale(res, k=1):
     plt.figure(dpi=300, figsize=(12,12))
@@ -14,7 +20,37 @@ def plot_with_logscale(res, k=1):
         res = np.abs(res)
     plt.imshow(res, norm=LogNorm(vmin=res.mean()-k*res.std(), vmax=res.mean()+k*res.std()))  # vmin should be > 0 for LogNorm
     plt.colorbar
+    plt.show()
+
+def plot_with_cdf(img):
+    plt.figure(figsize=(12, 12))
+    plt.title("Sentinel-1 Processed SAR Image")
     
+    img_abs = abs(img)
+    vmin, vmax = np.percentile(img_abs, [25, 99])
+    
+    plt.imshow(img_abs, origin='lower', norm=colors.LogNorm(vmin=vmin, vmax=vmax))
+    plt.xlabel("Down Range (samples)")
+    plt.ylabel("Cross Range (samples)")
+    plt.show()
+
+def read_tif(tif_path, verbose=False):
+    with rasterio.open(tif_path) as dataset:
+        # Print dataset properties
+        if verbose:
+            print("Dataset properties:")
+            print(f"Name: {dataset.name}")
+            print(f"Mode: {dataset.mode}")
+            print(f"Count: {dataset.count}")
+            print(f"Width: {dataset.width}")
+            print(f"Height: {dataset.height}")
+            print(f"CRS: {dataset.crs}")
+            print(f"Transform: {dataset.transform}")
+
+        # Read the first band
+        band1 = dataset.read(1)
+    return band1
+
 def read_zarr_database():
     file_path = "/home/roberto/PythonProjects/SSFocus/Data/FOCUSED/Mini_R2F.zarr"
     # To read the root array or group
@@ -57,7 +93,36 @@ def find_checkpoint(folder):
     subdir = os.path.join(folder, 'checkpoints')
     checkpoint_filepath = os.listdir(subdir)[0]
     return os.path.join(subdir, checkpoint_filepath)    
+
+
+def dump(obj, filename):
+    """
+    Save an object to a pickle file.
+
+    Parameters:
+    obj (object): The object to be saved.
+    filename (str): The name of the file where the object will be saved.
+    """
+    # Example usage
+    # my_data = {'key': 'value'}
+    # save_to_pickle(my_data, 'my_data.pkl')
     
+    with open(filename, 'wb') as file:
+        pickle.dump(obj, file)
+
+def load(filename):
+    """
+    Load an object from a pickle file.
+
+    Parameters:
+    filename (str): The name of the file from which the object will be loaded.
+
+    Returns:
+    object: The object loaded from the pickle file.
+    """
+    with open(filename, 'rb') as file:
+        return pickle.load(file)
+
 def main():
     print("Starting main..")
     pass
