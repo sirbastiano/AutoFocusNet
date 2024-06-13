@@ -3,6 +3,32 @@ import torch.nn.functional as F
 from torch.nn.functional import conv2d
 import numpy as np
 
+# Constants for SSIM
+K1 = 0.01
+K2 = 0.03
+
+def luminance(img1, img2):
+    mu_x = np.mean(img1)
+    mu_y = np.mean(img2)
+    L = max(np.max(img1), np.max(img2)) - min(np.min(img1), np.min(img2))
+    C1 = (K1 * L) ** 2
+    return (2 * mu_x * mu_y + C1) / (mu_x ** 2 + mu_y ** 2 + C1)
+
+def contrast(img1, img2):
+    sigma_x = np.std(img1)
+    sigma_y = np.std(img2)
+    L = max(np.max(img1), np.max(img2)) - min(np.min(img1), np.min(img2))
+    C2 = (K2 * L) ** 2
+    return (2 * sigma_x * sigma_y + C2) / (sigma_x ** 2 + sigma_y ** 2 + C2)
+
+def structure(img1, img2):
+    sigma_x = np.std(img1)
+    sigma_y = np.std(img2)
+    sigma_xy = np.mean((img1 - np.mean(img1)) * (img2 - np.mean(img2)))
+    L = max(np.max(img1), np.max(img2)) - min(np.min(img1), np.min(img2))
+    C2 = (K2 * L) ** 2
+    C3 = C2 / 2
+    return (sigma_xy + C3) / (sigma_x * sigma_y + C3)
 
 
 def create_window(window_size, channel):
