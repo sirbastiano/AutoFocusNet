@@ -4,7 +4,7 @@ import subprocess
 
 setup(
     name='SARLens',
-    version='0.1',
+    version='0.2-alfa',
     description='SAR Focusing using AI',
     long_description='A python package for SAR focusing and AI designed with torch and lightning. Sentinel-1 decoeder imported from Rich-Hall',
     long_description_content_type="text/markdown",
