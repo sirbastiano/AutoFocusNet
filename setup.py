@@ -37,15 +37,20 @@ def install_dependencies():
                 
         return install_requires
 
+def long_description_reader():
+    with open("README.md", encoding="utf-8") as fh:
+        long_description = fh.read()
+    return long_description
 
 install_dependencies()
 
-
+LD = long_description_reader()
 
 setup(
     name='SARLens',
     version='0.1',
     description='SAR Focusing using AI',
+    long_description=LD,
     long_description_content_type="text/markdown",
     author='Roberto Del Prete',
     author_email='roberto.delprete@ext.esa.int',
