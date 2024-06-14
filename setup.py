@@ -38,16 +38,26 @@ def install_dependencies():
         return install_requires
 
 
-install_requires = install_dependencies()
+install_dependencies()
 
 setup(
     name='SARLens',
     version='0.1',
     description='SAR Focusing using AI',
+    long_description=open("README.md", encoding="cp437").read(),
+    long_description_content_type="text/markdown",
     author='Roberto Del Prete',
     author_email='roberto.delprete@ext.esa.int',
     packages=find_packages(),
-    install_requires=install_requires,
+    install_requires=["asf_search",
+                        "pandas",
+                        "rasterio",
+                        "matplotlib",
+                        "torch",
+                        "torchvision",
+                        "torchmetrics",
+                        "seaborn",
+                        ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -55,5 +65,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.10',
     ],
+    python_requires=">=3.10, <4",
+    project_urls={"Source": "https://github.com/sirbastiano/AutoFocusNet"},
 )
-
