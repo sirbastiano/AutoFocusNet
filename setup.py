@@ -6,7 +6,7 @@ setup(
     name='SARLens',
     version='0.1',
     description='SAR Focusing using AI',
-    long_description=open("README.md", encoding="cp437").read(),
+    long_description=open("readme.md", encoding="cp437").read(),
     long_description_content_type="text/markdown",
     author='Roberto Del Prete',
     author_email='roberto.delprete@ext.esa.int',
