@@ -34,8 +34,6 @@ def install_dependencies():
             if pack != "":
                 package = pack.replace(' ','')
                 subprocess.check_call(["pip", "install", package])
-        
-        
 
 
 
