@@ -43,7 +43,7 @@ def decoder(inputfile, burst_n):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-i', '--inputfile', type=str, help='Path to input .dat file', default=None)
-    parser.add_argument('-o', '--output', type=str, help='Path to folder output files', default='/Users/robertodelprete/Desktop/AutoFocusNet/DATA/DECODED')
+    parser.add_argument('-o', '--output', type=str, help='Path to folder output files', default=None)
     parser.add_argument('-p','--packet', type=int, help='Packet number', default=8)
     args = parser.parse_args()
 

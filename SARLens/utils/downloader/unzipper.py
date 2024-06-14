@@ -5,6 +5,8 @@ import os
 import zipfile
 from pathlib import Path
 import logging
+import argparse 
+
 
 # set up logging
 # Create a logger with the name "myapp"
@@ -37,9 +39,9 @@ wordir = os.environ["SARLENS_DIR"]
 zip_dir = os.path.join(wordir, "DATA")
 zip_dir = Path(zip_dir)
 
-def main():
+def main(folder_path: str):
     # get a list of all the zip files
-    zipFiles = [x for x in zip_dir.glob('**/*.zip') if x.is_file() and x.name.startswith("S1")]
+    zipFiles = [x for x in zip_dir.glob(f'{folder_path}/**/*.zip') if x.is_file() and x.name.startswith("S1")]
     assert len(zipFiles) > 0, f"No zip files found in {zip_dir}"
     logger.info(f"Found {len(zipFiles)} zip files in {zip_dir}")
     
@@ -57,4 +59,11 @@ if __name__ == "__main__":
     """ This is executed when run from the command line:
         python -m utils.downloader.unzipper
     """
-    main()
+    # Set search parameters with argparse
+    parser = argparse.ArgumentParser()
+    # create a wkt with: https://wktmap.com/
+    parser.add_argument("--i", help="Folder Path", default=None)
+    
+    args = parser.parse_args()
+    
+    main(args)

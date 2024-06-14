@@ -32,7 +32,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Environment :: GPU :: NVIDIA CUDA :: 11.0",
     ],
-    packages=["SARLens", "SARLens.autofocus", "SARLens.processor", "SARLens.utils"],
+    packages=["SARLens", "SARLens.autofocus", "SARLens.processor", "SARLens.utils", "sentinel1decoder"],
     python_requires=">=3.10, <4",
     project_urls={"Source": "https://github.com/sirbastiano/AutoFocusNet"},
 )
