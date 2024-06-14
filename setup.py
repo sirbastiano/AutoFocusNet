@@ -3,8 +3,6 @@ import os
 import subprocess
 import platform
 
-with open("./requirements.txt", "r") as f:
-    install_requires = f.read().split("\n")
 
 def is_linux():
     print("Platform system: ",platform.system())
@@ -29,16 +27,18 @@ def install_dependencies():
     subprocess.check_call(["pip", "install", "git+https://github.com/Rich-Hall/sentinel1decoder"])
     
     with open("./requirements.txt", "r") as f:
+        install_requires = []
         packages = f.read().split("\n")
         for pack in packages:
             if pack != "":
                 package = pack.replace(' ','')
+                install_requires.append(package)
                 subprocess.check_call(["pip", "install", package])
+                
+        return install_requires
 
 
-
-
-install_dependencies()
+install_requires = install_dependencies()
 
 setup(
     name='SARLens',
@@ -53,8 +53,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
 )
 
