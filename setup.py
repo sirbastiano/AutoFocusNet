@@ -47,8 +47,6 @@ setup(
     name='SARLens',
     version='0.1',
     description='SAR Focusing using AI',
-    include_package_data=True,
-    long_description=long_description,
     long_description_content_type="text/markdown",
     author='Roberto Del Prete',
     author_email='roberto.delprete@ext.esa.int',
