@@ -20,9 +20,9 @@ def install_dependencies():
     torch_dependencies = "https://download.pytorch.org/whl/torch_stable.html"
 
     if system == 0:
-        subprocess.check_call(["pip", "install", "torch==2.3.1+cu118", "torchvision==0.15.1+cu118", "-f", torch_dependencies])
+        subprocess.check_call(["pip", "install", "torch==2.3.1+cu118", "torchvision==0.18.1+cu118", "-f", torch_dependencies])
     else:
-        subprocess.check_call(["pip", "install", "torch==2.3.1", "torchvision==0.15.1", "-f", torch_dependencies])
+        subprocess.check_call(["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "-f", torch_dependencies])
         
     subprocess.check_call(["pip", "install", "git+https://github.com/Rich-Hall/sentinel1decoder"])
     
