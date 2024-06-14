@@ -6,7 +6,7 @@ setup(
     name='SARLens',
     version='0.1',
     description='SAR Focusing using AI',
-    long_description='A python package for SAR focusing and AI designed with torch and lightning.',
+    long_description='A python package for SAR focusing and AI designed with torch and lightning. Sentinel-1 decoeder imported from Rich-Hall',
     long_description_content_type="text/markdown",
     author='Roberto Del Prete',
     author_email='roberto.delprete@ext.esa.int',
@@ -22,7 +22,6 @@ setup(
                         "torchvision",
                         "torchmetrics",
                         "seaborn",
-                        "sentinel1decoder @ git+https://github.com/Rich-Hall/sentinel1decoder@main"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
