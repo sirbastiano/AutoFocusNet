@@ -26,7 +26,7 @@ def install_dependencies():
         
     subprocess.check_call(["pip", "install", "git+https://github.com/Rich-Hall/sentinel1decoder"])
     
-    with open("./requirements.txt", "r") as f:
+    with open("requirements.txt", "r") as f:
         install_requires = []
         packages = f.read().split("\n")
         for pack in packages:
