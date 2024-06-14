@@ -38,10 +38,9 @@ def install_dependencies():
         return install_requires
 
 
-with open("README.md", encoding="utf-8") as fh:
-    long_description = fh.read()
-
 install_dependencies()
+
+
 
 setup(
     name='SARLens',
