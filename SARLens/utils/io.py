@@ -22,8 +22,8 @@ def plot_with_logscale(res, k=1):
     plt.colorbar
     plt.show()
 
-def plot_with_cdf(img, savepath=None):
-    plt.figure(figsize=(22, 22))
+def plot_with_cdf(img, figsize=(22, 22), savepath=None):
+    plt.figure(figsize=figsize)
     plt.title("Sentinel-1 Processed SAR Image")
     
     img_abs = abs(img)
