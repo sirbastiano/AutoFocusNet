@@ -11,7 +11,7 @@ authors = [
     { name = "Roberto Del Prete", email = "roberto.delprete@ext.esa.int" }
 ]
 license = { text = "GNU General Public License v3 (GPLv3)" }
-requires-python = ">=3.10, <4"
+requires-python = ">=3.8, <4"
 keywords = ["SAR", "AI", "focusing", "torch", "lightning", "Sentinel-1"]
 classifiers = [
     "Development Status :: 3 - Alpha",

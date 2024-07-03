@@ -10,12 +10,12 @@ then
     exit 1
 fi
 
-# Create a new Conda environment called AINavi
-conda create -n SARLens python=3.10 -y
+# Create a new Conda environment 
+conda create -n sarlib python=3.9 -y
 
 # Activate the AINavi environment
 source $(conda info --base)/etc/profile.d/conda.sh
-if conda activate SARLens; then
+if conda activate sarlib; then
     echo "SARLens environment activated"
 else
     echo "SARLens environment not found"
@@ -33,6 +33,6 @@ if [ ! -f setup.py ]; then
   exit 1
 fi
 # Run the setup.py script
-python setup.py develop
+python3 -m pip install --editable .
 
 source setup.sh
