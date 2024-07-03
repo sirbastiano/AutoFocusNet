@@ -31,8 +31,9 @@ dependencies = [
     "torchvision",
     "torchmetrics",
     "seaborn",
-    "pyFFT",
     "scipy",
+    "s1isp@git+https://github.com/sirbastiano/s1isp.git",
+    "numpy==1.26",
 ]
 
 [tool.setuptools]

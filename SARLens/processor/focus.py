@@ -95,22 +95,6 @@ class coarseRDA:
             # FFT each azimuth line
             self.radar_data = torch.fft.fftshift(torch.fft.fft(self.radar_data, dim=0), dim=0)
             
-        elif self._backend == 'fftw':
-            # Create FFTW plans
-            a = pyfftw.empty_aligned(self.radar_data.shape, dtype='complex128')
-            b = pyfftw.empty_aligned(self.radar_data.shape, dtype='complex128')
-            fftw_plan_r = pyfftw.FFTW(a, b, axes=(1,), direction='FFTW_FORWARD', threads=4)
-            fftw_plan_a = pyfftw.FFTW(b, a, axes=(0,), direction='FFTW_FORWARD', threads=4)
-
-            # Copy data into the FFTW input array
-            np.copyto(a, self.radar_data)
-
-            # Perform FFT along the range dimension
-            fftw_plan_r.execute()
-
-            # Perform FFT along the azimuth dimension and apply FFT shift
-            fftw_plan_a.execute()
-            self.radar_data = fftshift(a, axes=0)
         else:
             raise ValueError('Backend not supported.')
         

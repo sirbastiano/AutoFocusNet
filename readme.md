@@ -35,11 +35,7 @@ To get started with the project, follow these installation steps:
    Clone & Install the repo from avalentino for the s1isp decoder:
    
    ```sh
-   git clone https://github.com/sirbastiano/s1isp.git
-   cd s1isp 
    python3 -m pip install --editable .
-   cd ..
-   pip install . -e
    ```
 
 ## Usage
