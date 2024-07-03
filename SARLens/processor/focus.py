@@ -5,7 +5,7 @@ try:
 except:
     print('Unable to import torch module')
 import pickle
-import sentinel1decoder
+# import sentinel1decoder
 import pandas as pd
 from scipy.interpolate import interp1d
 import math
@@ -15,6 +15,9 @@ import gc
 # check ram usage:
 import psutil
 import time
+
+from os import environ
+environ['OMP_NUM_THREADS'] = '8'
 
 from SARLens.utils.io import dump
 
@@ -49,9 +52,9 @@ def initialize_params(device=None, slant_range_vec=None, D=None, c=None, len_ran
 
 class coarseRDA:
 
-    def __init__(self, raw_data=None, verbose=False):
+    def __init__(self, raw_data=None, verbose=False, backend='numpy'):
         ######### Settings Private Variables
-        self._backend = 'numpy'
+        self._backend = backend
         self._verbose = verbose
         ######### Extraction of data
         self.radar_data = raw_data['echo']
@@ -91,6 +94,23 @@ class coarseRDA:
             self.radar_data = torch.fft.fft(self.radar_data, dim=1)
             # FFT each azimuth line
             self.radar_data = torch.fft.fftshift(torch.fft.fft(self.radar_data, dim=0), dim=0)
+            
+        elif self._backend == 'fftw':
+            # Create FFTW plans
+            a = pyfftw.empty_aligned(self.radar_data.shape, dtype='complex128')
+            b = pyfftw.empty_aligned(self.radar_data.shape, dtype='complex128')
+            fftw_plan_r = pyfftw.FFTW(a, b, axes=(1,), direction='FFTW_FORWARD', threads=4)
+            fftw_plan_a = pyfftw.FFTW(b, a, axes=(0,), direction='FFTW_FORWARD', threads=4)
+
+            # Copy data into the FFTW input array
+            np.copyto(a, self.radar_data)
+
+            # Perform FFT along the range dimension
+            fftw_plan_r.execute()
+
+            # Perform FFT along the azimuth dimension and apply FFT shift
+            fftw_plan_a.execute()
+            self.radar_data = fftshift(a, axes=0)
         else:
             raise ValueError('Backend not supported.')
         

@@ -66,7 +66,6 @@ def decoder(inputfile):
         bursts_lists.append({'echo':radar_data, 'metadata':metadata, 'ephemeris':ephemeris})
     return bursts_lists
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-i', '--inputfile', type=str, help='Path to input .dat file', default=None)

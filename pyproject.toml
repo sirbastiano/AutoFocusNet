@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SARLens"
+version = "0.2"
+description = "SAR Focusing using AI"
+readme = "README.md"
+authors = [
+    { name = "Roberto Del Prete", email = "roberto.delprete@ext.esa.int" }
+]
+license = { text = "GNU General Public License v3 (GPLv3)" }
+requires-python = ">=3.10, <4"
+keywords = ["SAR", "AI", "focusing", "torch", "lightning", "Sentinel-1"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: GIS",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3.8",
+    "Environment :: GPU :: NVIDIA CUDA :: 11.0",
+]
+dependencies = [
+    "asf_search==7.1.2",
+    "pandas",
+    "rasterio",
+    "matplotlib",
+    "torch",
+    "torchvision",
+    "torchmetrics",
+    "seaborn",
+    "pyFFT",
+    "scipy",
+]
+
+[tool.setuptools]
+packages = ["SARLens", "SARLens.autofocus", "SARLens.processor", "SARLens.utils", "s1isp"]
+
+[tool.setuptools.package-data]
+"SARLens" = ["*.txt", "*.rst", "*.md"]
+
+[project.urls]
+Source = "https://github.com/sirbastiano/AutoFocusNet"

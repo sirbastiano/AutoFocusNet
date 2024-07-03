@@ -30,7 +30,7 @@ echo "Input product is:" $1
 echo "Output directory is:" $2
 # python -m processor.decode --inputfile $1 --output $2
 
-DECODER=/Users/robertodelprete/Desktop/AutoFocusNet/SARLens/processor/decode2.py
+DECODER=/Users/robertodelprete/Desktop/AutoFocusNet/SARLens/processor/decode.py
 
 python $DECODER --inputfile $1 --output $2
 Now2=$(date +"%Y-%m-%d %H:%M:%S")
