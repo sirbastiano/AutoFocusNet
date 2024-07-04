@@ -38,6 +38,8 @@ To get started with the project, follow these installation steps:
    python3 -m pip install --editable .
    ```
 
+   Install pytorch for your system.
+
 ## Usage
 
 Provide examples or steps to use the project. Include code snippets if necessary.

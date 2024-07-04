@@ -1,0 +1,208 @@
+<!--
+   Sentinel-SAFE - Sentinel Format
+   Copyright (C) 2011 European Space Agency (ESA)
+   Copyright (C) 2011 Consultant
+   GNU Lesser General Public License (LGPL)
+
+   This file is part of Sentinel-SAFE
+
+   Sentinel-SAFE is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Sentinel-SAFE is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<xs:schema xmlns:sdf           ="http://www.gael.fr/2004/12/drb/sdf"
+           xmlns:xs            ="http://www.w3.org/2001/XMLSchema"
+           xmlns:sentinel-safe ="http://www.esa.int/safe/sentinel-1.0"
+           targetNamespace     ="http://www.esa.int/safe/sentinel-1.0"
+           elementFormDefault  ="qualified"
+           attributeFormDefault="unqualified">
+
+   <xs:annotation>
+      <xs:documentation>
+      Sentinel-SAFE index Reference Types.
+      </xs:documentation>
+   </xs:annotation>
+
+   <xs:element name="dataIndex" type="sentinel-safe:dataIndex"/>
+
+   <xs:complexType name="dataIndex">
+      <xs:annotation>
+         <xs:documentation xml:lang="en">
+            Data index
+         </xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+
+         <xs:element name="block" type="sentinel-safe:block"
+                     minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:documentation xml:lang="en">
+                  Block Index. It describes completely one data block and
+                  contains all information to point to the block start within
+                  the Data Object file.
+               </xs:documentation>
+               <xs:appinfo>
+                  <sdf:block>
+                   <sdf:occurrence>unbounded</sdf:occurrence>
+                   <sdf:length>36</sdf:length>
+                 </sdf:block>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:simpleType name="dateAndTimeType">
+      <xs:annotation>
+         <xs:documentation>
+         Date and Time of current block (expressed in MJD 1950).
+         </xs:documentation>
+         <xs:appinfo>
+            <sdf:block>
+               <sdf:encoding>BINARY</sdf:encoding>
+               <sdf:length>8</sdf:length>
+            </sdf:block>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:double"/>
+   </xs:simpleType>
+
+   <xs:simpleType name="deltaTimeType">
+      <xs:annotation>
+         <xs:documentation>
+         Delta time between data units (applicable within current block but
+         variable among blocks) expressed in milliseconds and fractions.
+         </xs:documentation>
+         <xs:appinfo>
+            <sdf:block>
+               <sdf:encoding>BINARY</sdf:encoding>
+               <sdf:length>8</sdf:length>
+           </sdf:block>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:double"/>
+   </xs:simpleType>
+
+   <xs:simpleType name="deltaSizeType">
+      <xs:annotation>
+         <xs:documentation>
+         Size in bytes of the data unit pointed by the current index (valid for
+         all the data units in the block if this size is fixed, otherwise valid
+         only for the first line).
+         </xs:documentation>
+         <xs:appinfo>
+            <sdf:block>
+               <sdf:encoding>BINARY</sdf:encoding>
+               <sdf:length>4</sdf:length>
+           </sdf:block>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:unsignedInt"/>
+   </xs:simpleType>
+
+   <xs:simpleType name="dataUnitsOffsetType">
+      <xs:annotation>
+         <xs:documentation>
+         Offset (expressed as number of data units - record or swath) from the
+         beginning of file. Starting from 1.
+         </xs:documentation>
+         <xs:appinfo>
+            <sdf:block>
+               <sdf:encoding>BINARY</sdf:encoding>
+               <sdf:length>4</sdf:length>
+           </sdf:block>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:unsignedInt"/>
+   </xs:simpleType>
+
+   <xs:simpleType name="byteOffsetType">
+      <xs:annotation>
+         <xs:documentation>
+         Offset (expressed as number of bytes) from the beginning of file. 
+         Starting from 0.
+         </xs:documentation>
+         <xs:appinfo>
+            <sdf:block>
+               <sdf:encoding>BINARY</sdf:encoding>
+               <sdf:length>8</sdf:length>
+           </sdf:block>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:unsignedLong"/>
+   </xs:simpleType>
+
+   <xs:simpleType name="variableSizeFlagType">
+      <xs:annotation>
+         <xs:documentation>
+         Flag set to 1 if the data unit size is variable.
+         </xs:documentation>
+         <xs:appinfo>
+            <sdf:block>
+               <sdf:encoding>BINARY</sdf:encoding>
+               <sdf:length>1</sdf:length>
+           </sdf:block>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:boolean"/>
+   </xs:simpleType>
+
+   <xs:complexType name="block">
+      <xs:annotation>
+         <xs:documentation xml:lang="en">
+            Block Index. It describes completely one data block and
+            contains all informations to point to the block start within
+            the Data Component or Metadata Component.
+         </xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+         
+         <xs:element name="dateAndTime"
+                     type="sentinel-safe:dateAndTimeType"/>
+
+         <xs:element name="deltaTime"
+                     type="sentinel-safe:deltaTimeType"/>
+
+         <xs:element name="deltaSize"
+                     type="sentinel-safe:deltaSizeType"/>
+
+         <xs:element name="dataUnitsOffset"
+                     type="sentinel-safe:dataUnitsOffsetType"/>
+
+         <xs:element name="byteOffset"
+                     type="sentinel-safe:byteOffsetType"/>
+
+         <xs:element name="variableSizeFlag"
+                     type="sentinel-safe:variableSizeFlagType"/>
+
+         <xs:element name="spare" type="xs:unsignedByte"
+                     minOccurs="3" maxOccurs="3">
+            <xs:annotation>
+               <xs:documentation xml:lang="en">
+                  Spare (to align the structure to 36 bytes).
+               </xs:documentation>
+               <xs:appinfo>
+                  <sdf:block>
+                     <sdf:encoding>BINARY</sdf:encoding>
+                     <sdf:occurrence>3</sdf:occurrence>
+                     <sdf:length>1</sdf:length>
+                 </sdf:block>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+
+      </xs:sequence>
+   </xs:complexType>      
+
+</xs:schema>

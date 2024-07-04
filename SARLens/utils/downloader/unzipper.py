@@ -36,10 +36,13 @@ logger.addHandler(console_handler)
 wordir = os.environ["SARLENS_DIR"]
 
 # get the path to the zip files
-zip_dir = os.path.join(wordir, "DATA")
+zip_dir = os.path.join(wordir, "Data")
 zip_dir = Path(zip_dir)
 
 def main(folder_path: str):
+    folder_path = args.i
+    print('Folder selected:', folder_path)
+    folder_path = Path(folder_path)
     # get a list of all the zip files
     zipFiles = [x for x in zip_dir.glob(f'{folder_path}/**/*.zip') if x.is_file() and x.name.startswith("S1")]
     assert len(zipFiles) > 0, f"No zip files found in {zip_dir}"
@@ -62,7 +65,7 @@ if __name__ == "__main__":
     # Set search parameters with argparse
     parser = argparse.ArgumentParser()
     # create a wkt with: https://wktmap.com/
-    parser.add_argument("--i", help="Folder Path", default=None)
+    parser.add_argument("-i", help="Folder Path", default=None)
     
     args = parser.parse_args()
     

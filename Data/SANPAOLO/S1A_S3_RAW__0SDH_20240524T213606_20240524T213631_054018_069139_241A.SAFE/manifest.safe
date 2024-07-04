@@ -1,0 +1,249 @@
+<?xml version ="1.0" encoding="UTF-8"?>
+   <xfdu:XFDU version="esa/safe/sentinel-1.0/sentinel-1/sar/level-0/standard/smdp" xmlns:s1="http://www.esa.int/safe/sentinel-1.0/sentinel-1" xmlns:s1sar="http://www.esa.int/safe/sentinel-1.0/sentinel-1/sar" xmlns:xfdu="urn:ccsds:schema:xfdu:1">
+      <informationPackageMap>
+         <xfdu:contentUnit unitType="SAFE Archive Information Package" textInfo="Sentinel-1 Level 0 Package" dmdID="acquisitionPeriod platform generalProductInformation" pdiID="processing">
+            <xfdu:contentUnit  unitType="Metadata Unit" textInfo="Annotation for Measurement Data 1" repID="measurementAnnotationSchema">
+               <dataObjectPointer dataObjectID="measurementAnnotData1"/>
+            </xfdu:contentUnit>
+            <xfdu:contentUnit  unitType="Metadata Unit" textInfo="Annotation for Measurement Data 2" repID="measurementAnnotationSchema">
+               <dataObjectPointer dataObjectID="measurementAnnotData2"/>
+            </xfdu:contentUnit>
+            <xfdu:contentUnit  unitType="Measurement Data Unit" textInfo="Measurement Data Unit 1" repID="measurementSchema" dmdID="measurementOrbitReference measurementFrameSet measurementQualityInformation measurement1IndexAnnotation measurement1Annotation">
+               <dataObjectPointer dataObjectID="measurementData1"/>
+            </xfdu:contentUnit>
+            <xfdu:contentUnit  unitType="Measurement Data Unit" textInfo="Measurement Data Unit 2" repID="measurementSchema" dmdID="measurementOrbitReference measurementFrameSet measurementQualityInformation measurement2IndexAnnotation measurement2Annotation">
+               <dataObjectPointer dataObjectID="measurementData2"/>
+            </xfdu:contentUnit>
+            <xfdu:contentUnit  unitType="Metadata Unit" textInfo="Index for Measurement Data 1" repID="measurementIndexAnnotationSchema">
+               <dataObjectPointer dataObjectID="measurementIndexData1"/>
+            </xfdu:contentUnit>
+            <xfdu:contentUnit  unitType="Metadata Unit" textInfo="Index for Measurement Data 2" repID="measurementIndexAnnotationSchema">
+               <dataObjectPointer dataObjectID="measurementIndexData2"/>
+            </xfdu:contentUnit>
+         </xfdu:contentUnit>
+      </informationPackageMap>
+      <metadataSection>
+         <metadataObject ID="acquisitionPeriod" classification="DESCRIPTION" category="DMD">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="Acquisition Period">
+               <xmlData>
+                  <acquisitionPeriod xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <startTime>2024-05-24T21:36:06.276405Z</startTime>
+                     <stopTime>2024-05-24T21:36:31.835426Z</stopTime>
+                     <extension>
+                        <s1:timeANX>
+                           <s1:startTimeANX>5508835.2780</s1:startTimeANX>
+                           <s1:stopTimeANX>5534394.2990</s1:stopTimeANX>
+                        </s1:timeANX>
+                     </extension>
+                  </acquisitionPeriod>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="platform" classification="DESCRIPTION" category="DMD">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="Platform Description">
+               <xmlData>
+                  <platform xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <nssdcIdentifier>2014-016A</nssdcIdentifier>
+                     <familyName>SENTINEL-1</familyName>
+                     <number>A</number>
+                     <instrument>
+                        <familyName abbreviation="SAR">Synthetic Aperture Radar</familyName>
+                        <extension>
+                           <s1sar:instrumentMode>
+                              <s1sar:mode>SM</s1sar:mode>
+                              <s1sar:swathNumber>3</s1sar:swathNumber>
+                           </s1sar:instrumentMode>
+                        </extension>
+                     </instrument>
+                  </platform>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="generalProductInformation" classification="DESCRIPTION" category="DMD">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="General Product Information">
+               <xmlData>
+                  <standAloneProductInformation xmlns="http://www.esa.int/safe/sentinel-1.0/sentinel-1/sar">
+                     <productClass>S</productClass>
+                     <productClassDescription>SAR Slice L0 product</productClassDescription>
+                     <productConsolidation>SLICE</productConsolidation>
+                     <calISPPresent>TRUE</calISPPresent>
+                     <noiseISPPresent>TRUE</noiseISPPresent>
+                     <instrumentConfigurationID>7</instrumentConfigurationID>
+                     <missionDataTakeID>430393</missionDataTakeID>
+                     <circulationFlag>5</circulationFlag>
+                     <sliceProductFlag>TRUE</sliceProductFlag>
+                     <sliceNumber>1</sliceNumber>
+                     <theoreticalSliceLength>25</theoreticalSliceLength>
+                     <sliceOverlap>7.7</sliceOverlap>
+                     <echoCompressionType>FDBAQ_0</echoCompressionType>
+                     <noiseCompressionType>BAQ_5_BIT</noiseCompressionType>
+                     <calCompressionType>BYPASS</calCompressionType>
+                     <transmitterReceiverPolarisation dataObjectID="measurementData1">HH</transmitterReceiverPolarisation>
+                     <transmitterReceiverPolarisation dataObjectID="measurementData2">HV</transmitterReceiverPolarisation>
+                     <packetStoreID dataObjectID="measurementData1">21</packetStoreID>
+                     <packetStoreID dataObjectID="measurementData2">22</packetStoreID>
+                     <byteOrder dataObjectID="measurementData1">BIG_ENDIAN</byteOrder>
+                     <byteOrder dataObjectID="measurementData2">BIG_ENDIAN</byteOrder>
+                     <averageBitRate dataObjectID="measurementData1">226152658</averageBitRate>
+                     <averageBitRate dataObjectID="measurementData2">222399008</averageBitRate>
+                  </standAloneProductInformation>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="measurementOrbitReference" classification="DESCRIPTION" category="DMD">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="Orbit Reference">
+               <xmlData>
+                  <orbitReference xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <orbitNumber type="start">54018</orbitNumber>
+                     <orbitNumber type="stop">54018</orbitNumber>
+                     <relativeOrbitNumber type="start">46</relativeOrbitNumber>
+                     <relativeOrbitNumber type="stop">46</relativeOrbitNumber>
+                     <cycleNumber>323</cycleNumber>
+                     <phaseIdentifier>1</phaseIdentifier>
+                     <extension>
+                        <s1:orbitProperties>
+                           <s1:pass>ASCENDING</s1:pass>
+                           <s1:ascendingNodeTime>2024-05-24T20:04:17.441154Z</s1:ascendingNodeTime>
+                        </s1:orbitProperties>
+                     </extension>
+                  </orbitReference>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="processing" classification="PROVENANCE" category="PDI">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="Processing">
+               <xmlData>
+                  <processing name="Generation of Sentinel-1 L0 SAR Product, dual polarisation" start="2024-05-24T22:13:46.514229" stop="2024-05-24T22:13:46.591883" xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <facility country="Italy" name="S1A-PS" organisation="ESA" site="S1 Production Service-SERCO"/>
+                     <resource name="S-1 Core PDGS S-1 Level-0 Product Format Specifications S1PD.SP.00110.ASTR" role="Applicable Document">
+                     </resource>
+                     <resource name="Sentinel-1 SAR Space Packet Protocol Data Unit S1-IF-ASD-PL-0007" version="13.0" role="Applicable Document">
+                     </resource>
+                     <resource name="Unknown" role="Raw Data">
+                        <processing name="Generation of Sentinel-1 SAR Slice L0 product single polarisation" start="2024-05-24T22:13:23.740568" stop="2024-05-24T22:13:24.316868" xmlns="http://www.esa.int/safe/sentinel-1.0">
+                           <resource name="S-1 Core PDGS S-1 Level-0 Product Format Specifications S1PD.SP.00110.ASTR" role="Applicable Document">
+                           </resource>
+                           <resource name="Sentinel-1 SAR Space Packet Protocol Data Unit S1-IF-ASD-PL-0007" version="13.0" role="Applicable Document">
+                           </resource>
+                           <resource name="Downlinked Stream" role="Raw Data">
+                              <processing name="Raw Data Downlink Channel1 1" start="2024-05-24T22:03:17.383183" stop="2024-05-24T22:03:34.320968" xmlns="http://www.esa.int/safe/sentinel-1.0">
+                              </processing>
+                           </resource>
+                        </processing>
+                     </resource>
+                     <resource name="Unknown" role="Raw Data">
+                        <processing name="Generation of Sentinel-1 SAR Slice L0 product single polarisation" start="2024-05-24T22:13:38.142829" stop="2024-05-24T22:13:38.719985" xmlns="http://www.esa.int/safe/sentinel-1.0">
+                           <resource name="S-1 Core PDGS S-1 Level-0 Product Format Specifications S1PD.SP.00110.ASTR" role="Applicable Document">
+                           </resource>
+                           <resource name="Sentinel-1 SAR Space Packet Protocol Data Unit S1-IF-ASD-PL-0007" version="13.0" role="Applicable Document">
+                           </resource>
+                           <resource name="Downlinked Stream" role="Raw Data">
+                              <processing name="Raw Data Downlink Channel2 2" start="2024-05-24T22:03:32.356428" stop="2024-05-24T22:03:45.136698" xmlns="http://www.esa.int/safe/sentinel-1.0">
+                              </processing>
+                           </resource>
+                        </processing>
+                     </resource>
+                  </processing>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="measurementFrameSet" classification="DESCRIPTION" category="DMD">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="Frame Set">
+               <xmlData>
+                  <frameSet xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <frame>
+                        <footPrint srsName="http:/www.opengis.net/gml/srs/epsg.xml#4326">
+                           <coordinates xmlns="http://www.opengis.net/gml">-24.4734,-45.7476 -22.9453,-46.1691 -23.0738,-46.9289 -24.6047,-46.5165 -24.4734,-45.7476</coordinates>
+                        </footPrint>
+                     </frame>
+                  </frameSet>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="measurementQualityInformation" classification="DESCRIPTION" category="DMD">
+            <metadataWrap mimeType="text/xml" vocabularyName="SAFE" textInfo="Quality Information">
+               <xmlData>
+                  <qualityInformation xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <extension>
+                        <s1:qualityProperties>
+                           <s1:dataObjectID>measurementData1</s1:dataObjectID>
+                           <s1:numOfElements>48941</s1:numOfElements>
+                           <s1:numOfMissingElements>0</s1:numOfMissingElements>
+                           <s1:numOfCorruptedElements>0</s1:numOfCorruptedElements>
+                        </s1:qualityProperties>
+                     </extension>
+                  </qualityInformation>
+                  <qualityInformation xmlns="http://www.esa.int/safe/sentinel-1.0">
+                     <extension>
+                        <s1:qualityProperties>
+                           <s1:dataObjectID>measurementData2</s1:dataObjectID>
+                           <s1:numOfElements>48941</s1:numOfElements>
+                           <s1:numOfMissingElements>0</s1:numOfMissingElements>
+                           <s1:numOfCorruptedElements>0</s1:numOfCorruptedElements>
+                        </s1:qualityProperties>
+                     </extension>
+                  </qualityInformation>
+               </xmlData>
+            </metadataWrap>
+         </metadataObject>
+         <metadataObject ID="measurement1Annotation" classification="DESCRIPTION" category="DMD">
+            <dataObjectPointer dataObjectID="measurementAnnotData1"/>
+         </metadataObject>
+         <metadataObject ID="measurement1IndexAnnotation" classification="DESCRIPTION" category="DMD">
+            <dataObjectPointer dataObjectID="measurementIndexData1"/>
+         </metadataObject>
+         <metadataObject ID="measurement2Annotation" classification="DESCRIPTION" category="DMD">
+            <dataObjectPointer dataObjectID="measurementAnnotData2"/>
+         </metadataObject>
+         <metadataObject ID="measurement2IndexAnnotation" classification="DESCRIPTION" category="DMD">
+            <dataObjectPointer dataObjectID="measurementIndexData2"/>
+         </metadataObject>
+         <metadataObject ID="measurementAnnotationSchema" classification="SYNTAX" category="REP">
+            <metadataReference mimeType="text/xml" vocabularyName="SDF" locatorType="URL" href="./support/s1-level-0-annot.xsd"/>
+         </metadataObject>
+         <metadataObject ID="measurementIndexAnnotationSchema" classification="SYNTAX" category="REP">
+            <metadataReference mimeType="text/xml" vocabularyName="SDF" locatorType="URL" href="./support/s1-level-0-index.xsd"/>
+         </metadataObject>
+         <metadataObject ID="measurementSchema" classification="SYNTAX" category="REP">
+            <metadataReference mimeType="text/xml" vocabularyName="SDF" locatorType="URL" href="./support/s1-level-0.xsd"/>
+         </metadataObject>
+      </metadataSection>
+      <dataObjectSection>
+         <dataObject ID="measurementAnnotData1" repID="measurementAnnotationSchema">
+            <byteStream mimeType="application/octet-stream" size="1272466">
+               <fileLocation locatorType="URL" textInfo="Annotation for Measurement Data" href="./s1a-s3-raw-s-hh-20240524t213606-20240524t213631-054018-069139-annot.dat"/>
+               <checksum checksumName="MD5">c3cff14594e73f3f2dd5eee75c2712ac</checksum>
+            </byteStream>
+         </dataObject>
+         <dataObject ID="measurementAnnotData2" repID="measurementAnnotationSchema">
+            <byteStream mimeType="application/octet-stream" size="1272466">
+               <fileLocation locatorType="URL" textInfo="Annotation for Measurement Data" href="./s1a-s3-raw-s-hv-20240524t213606-20240524t213631-054018-069139-annot.dat"/>
+               <checksum checksumName="MD5">9963e13d6e5cd03020d41aac8700c095</checksum>
+            </byteStream>
+         </dataObject>
+         <dataObject ID="measurementData1" repID="measurementSchema">
+            <byteStream mimeType="application/octet-stream" size="722530068">
+               <fileLocation locatorType="URL" textInfo="Measurement Data Unit" href="./s1a-s3-raw-s-hh-20240524t213606-20240524t213631-054018-069139.dat"/>
+               <checksum checksumName="MD5">f0c2a5ef58e64204a43e3b065e0a9ec5</checksum>
+            </byteStream>
+         </dataObject>
+         <dataObject ID="measurementData2" repID="measurementSchema">
+            <byteStream mimeType="application/octet-stream" size="710537616">
+               <fileLocation locatorType="URL" textInfo="Measurement Data Unit" href="./s1a-s3-raw-s-hv-20240524t213606-20240524t213631-054018-069139.dat"/>
+               <checksum checksumName="MD5">780653294ed9e07c2a80c873b7f42b0f</checksum>
+            </byteStream>
+         </dataObject>
+         <dataObject ID="measurementIndexData1" repID="measurementIndexAnnotationSchema">
+            <byteStream mimeType="application/octet-stream" size="1800">
+               <fileLocation locatorType="URL" textInfo="Index for Measurement Data" href="./s1a-s3-raw-s-hh-20240524t213606-20240524t213631-054018-069139-index.dat"/>
+               <checksum checksumName="MD5">b213186332bb96122331c51fccaff15f</checksum>
+            </byteStream>
+         </dataObject>
+         <dataObject ID="measurementIndexData2" repID="measurementIndexAnnotationSchema">
+            <byteStream mimeType="application/octet-stream" size="1800">
+               <fileLocation locatorType="URL" textInfo="Index for Measurement Data" href="./s1a-s3-raw-s-hv-20240524t213606-20240524t213631-054018-069139-index.dat"/>
+               <checksum checksumName="MD5">2f53a37f3361270fa24a29d31f9934dd</checksum>
+            </byteStream>
+         </dataObject>
+      </dataObjectSection>
+   </xfdu:XFDU>
