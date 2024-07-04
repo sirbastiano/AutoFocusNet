@@ -1,4 +1,0 @@
-asf_search==7.1.2
-pandas==2.2.2
-rasterio
-matplotlib

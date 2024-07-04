@@ -12,9 +12,22 @@ import math
 from pathlib import Path 
 import copy 
 import gc
+from functools import wraps
+
+def auto_gc(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        gc.collect()
+        return result
+    return wrapper
+
 # check ram usage:
 import psutil
 import time
+
+from .DFT import perform_fft_custom 
+from . import constants as cnst
 
 from os import environ
 environ['OMP_NUM_THREADS'] = '8'
@@ -50,6 +63,43 @@ def initialize_params(device=None, slant_range_vec=None, D=None, c=None, len_ran
     params = {key: value for key, value in locals().items()}
     return params
 
+def range_dec_to_sample_rate(rgdec_code: int) -> float:
+    """
+    Convert range decimation code to sample rate.
+
+    Args:
+        rgdec_code: Range decimation code
+
+    Returns:
+        Sample rate for this range decimation code.
+
+    """
+    if rgdec_code == 0:
+        return 3 * cnst.F_REF
+    elif rgdec_code == 1:
+        return (8/3) * cnst.F_REF
+    elif rgdec_code == 3:
+        return (20/9) * cnst.F_REF
+    elif rgdec_code == 4:
+        return (16/9) * cnst.F_REF
+    elif rgdec_code == 5:
+        return (3/2) * cnst.F_REF
+    elif rgdec_code == 6:
+        return (4/3) * cnst.F_REF
+    elif rgdec_code == 7:
+        return (2/3) * cnst.F_REF
+    elif rgdec_code == 8:
+        return (12/7) * cnst.F_REF
+    elif rgdec_code == 9:
+        return (5/4) * cnst.F_REF
+    elif rgdec_code == 10:
+        return (6/13) * cnst.F_REF
+    elif rgdec_code == 11:
+        return (16/11) * cnst.F_REF
+    else:
+        raise Exception(f"Invalid range decimation code {rgdec_code} supplied - valid codes are 0-11")
+
+
 class coarseRDA:
 
     def __init__(self, raw_data=None, verbose=False, backend='numpy'):
@@ -68,7 +118,7 @@ class coarseRDA:
 
 
     @timing_decorator
-    def fft2D(self):
+    def fft2D(self, executors=12):
         # TODO: Test this function
         """
         Perform 2D FFT on a radar data array in range and azimuth dimensions.
@@ -80,12 +130,16 @@ class coarseRDA:
         Returns:
             np.array: 2D numpy array of radar data after 2D FFT.
         """
-
+        
         if self._backend == 'numpy':
+            self.radar_data = np.ascontiguousarray(self.radar_data)
             # FFT each range line
             self.radar_data = np.fft.fft(self.radar_data, axis=1)
             # FFT each azimuth line
             self.radar_data = np.fft.fftshift(np.fft.fft(self.radar_data, axis=0), axes=0)
+        
+        elif self._backend == 'custom':
+            self.radar_data = perform_fft_custom(self.radar_data, num_slices=executors)
             
         elif self._backend == 'torch':
             # Convert radar_data to a PyTorch tensor and move to device
@@ -113,17 +167,22 @@ class coarseRDA:
             3. It assumes that the metadata DataFrame has specific columns like 'Range Decimation', 'PRI', 'Rank', and 'SWST'.
 
         """
-        RGDEC = self.metadata["Range Decimation"].unique()[0]
-        self.range_sample_freq = sentinel1decoder.utilities.range_dec_to_sample_rate(RGDEC)
+        RGDEC = self.metadata["range_decimation"].unique()[0]
+        print('Getting Range Decimation:', RGDEC)
+        self.range_sample_freq = range_dec_to_sample_rate(RGDEC)
 
         # Nominal Replica Parameters
-        TXPSF = self.metadata["Tx Pulse Start Frequency"].unique()[0]
-        TXPRR = self.metadata["Tx Ramp Rate"].unique()[0]
-        TXPL = self.metadata["Tx Pulse Length"].unique()[0]
+        print('Getting Replica Parameters')
+        printmemory()
+        TXPSF = self.metadata["tx_pulse_start_freq"].unique()[0]
+        TXPRR = self.metadata["tx_ramp_rate"].unique()[0]
+        TXPL = self.metadata["tx_pulse_length"].unique()[0]
         num_tx_vals = int(TXPL*self.range_sample_freq)
         tx_replica_time_vals = np.linspace(-TXPL/2, TXPL/2, num=num_tx_vals)
+        printmemory()
         phi1 = TXPSF + TXPRR*TXPL/2
         phi2 = TXPRR/2
+        print('Calculating Tx Nominal replica')
         tx_replica = np.exp(2j * np.pi * (phi1*tx_replica_time_vals + phi2*tx_replica_time_vals**2))
 
         # Create range filter from replica pulse

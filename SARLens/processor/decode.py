@@ -60,7 +60,7 @@ def decoder(inputfile):
     bursts_lists = []
     
     for burst in echo_bursts:
-        headers_data = s1isp.decoder.decoded_stream_to_dict(burst)
+        headers_data = s1isp.decoder.decoded_stream_to_dict(burst, enum_value=True)
         metadata = pd.DataFrame(headers_data)
         radar_data = np.array([get_echo_arr(x) for x in burst])
         bursts_lists.append({'echo':radar_data, 'metadata':metadata, 'ephemeris':ephemeris})

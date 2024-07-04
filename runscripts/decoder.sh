@@ -16,7 +16,7 @@
 
 # Activate the SARLens environment
 source $(conda info --base)/etc/profile.d/conda.sh
-if conda activate decoder; then
+if conda activate s1isp; then
     echo "Environment activated"
 else
     echo "Environment not found"
@@ -35,6 +35,3 @@ DECODER=/Users/robertodelprete/Desktop/AutoFocusNet/SARLens/processor/decode.py
 python $DECODER --inputfile $1 --output $2
 Now2=$(date +"%Y-%m-%d %H:%M:%S")
 echo "========= End Decoding ========= $Now2"
-
-
-exit 0
