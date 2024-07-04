@@ -8,6 +8,8 @@ import s1isp
 from s1isp.decoder import decoded_subcomm_to_dict
 from s1isp.decoder import EUdfDecodingMode
 
+from backup_metahandler import meta_extractor
+
 def extract_echo_bursts(records):
     """
     Splits a list into sublists based on given indexes.
@@ -21,6 +23,17 @@ def extract_echo_bursts(records):
     
     signal_types = {'noise': 1, 'tx_cal': 8, 'echo': 0}
     filtered = [x for x in records if x[1].radar_configuration_support.ses.signal_type == signal_types['echo']]
+    
+    #### TMP, TODO: remove it
+    # Initialize the index
+    echo_start_idx = None
+
+    # Iterate through records with index
+    for idx, x in enumerate(records):
+        if x[1].radar_configuration_support.ses.signal_type == signal_types['echo']:
+            echo_start_idx = idx
+            break  # Exit loop once the first match is found
+    
     # Get number of quads 
     get_nq = lambda x: x[1].radar_sample_count.number_of_quads
     # Computing first and last number of quads:
@@ -31,7 +44,8 @@ def extract_echo_bursts(records):
     nqs_list = [first_nq, last_nq]
     # Filtering the bursts
     bursts = [[x for x in filtered if get_nq(x) in [nq]] for idx, nq in enumerate(nqs_list)]
-    return bursts
+    # TODO: remove indexes
+    return bursts, [echo_start_idx, echo_start_idx+int(len(bursts[0])), echo_start_idx+int(len(bursts[0]))++int(len(bursts[1]))]
 
 def picklesavefile(path, datafile):
     with open(path, 'wb') as f:
@@ -52,7 +66,8 @@ def decoder(inputfile):
     ephemeris = subcom_data_decoded_df
     
     # Echoes signal extraction
-    echo_bursts = extract_echo_bursts(records) 
+    # TODO: remove indexes
+    echo_bursts, indexes = extract_echo_bursts(records) 
     
     # Lamda func to extract echo data from records
     get_echo_arr = lambda x: x.udf
@@ -64,7 +79,7 @@ def decoder(inputfile):
         metadata = pd.DataFrame(headers_data)
         radar_data = np.array([get_echo_arr(x) for x in burst])
         bursts_lists.append({'echo':radar_data, 'metadata':metadata, 'ephemeris':ephemeris})
-    return bursts_lists
+    return bursts_lists, indexes
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Description of your program')
@@ -79,10 +94,13 @@ if __name__ == '__main__':
     
     if inputfile is not None:
         print('Decoding Level 0 file...')
-        l0file = decoder(inputfile)
+        l0file, indexes = decoder(inputfile)
+        total_metadata = meta_extractor(inputfile)
+        
         for idx, burst in enumerate(l0file):
             ephemeris = burst['ephemeris']
-            metadata = burst['metadata']
+            # metadata = burst['metadata']
+            metadata = total_metadata.iloc[indexes[idx]:indexes[idx+1]]
             radar_data = burst['echo']
             # Save
             ephemeris.to_pickle(os.path.join(output_folder, Path(inputfile).stem + '_ephemeris.pkl'))

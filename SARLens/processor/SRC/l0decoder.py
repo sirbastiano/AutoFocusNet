@@ -19,8 +19,8 @@ class Level0Decoder:
 
     def __init__(self, filename: str, log_level: int = logging.WARNING):
         # TODO: Better logging functionality
-        logging.basicConfig(filename='output_log.log', level=log_level)
-        logging.debug("Initialized logger")
+        # logging.basicConfig(filename='output_log.log', level=log_level)
+        # logging.debug("Initialized logger")
 
         self.filename = filename
 
