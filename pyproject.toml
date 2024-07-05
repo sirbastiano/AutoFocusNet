@@ -24,13 +24,13 @@ classifiers = [
 ]
 dependencies = [
     "asf_search==7.1.2",
-    "pandas",
+    "pandas[numpy]",
     "rasterio",
     "matplotlib",
     "seaborn",
     "scipy",
     "s1isp@git+https://github.com/sirbastiano/s1isp.git",
-    "numpy==1.26",
+    "futures",
 ]
 
 [tool.setuptools]
