@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["SARLens", "SARLens.autofocus", "SARLens.processor", "SARLens.utils"]
+packages = ["SARLens", "SARLens.autofocus", "SARLens.processor", "SARLens.processor.SRC", "SARLens.utils", "SARLens.utils.downloader"]
 
 [tool.setuptools.package-data]
 "SARLens" = ["*.txt", "*.rst", "*.md"]
