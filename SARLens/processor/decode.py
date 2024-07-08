@@ -8,7 +8,7 @@ import s1isp
 from s1isp.decoder import decoded_subcomm_to_dict
 from s1isp.decoder import EUdfDecodingMode
 
-from backup_metahandler import meta_extractor
+from .backup_metahandler import meta_extractor
 
 def extract_echo_bursts(records):
     """
@@ -50,6 +50,26 @@ def extract_echo_bursts(records):
 def picklesavefile(path, datafile):
     with open(path, 'wb') as f:
         pickle.dump(datafile, f)
+
+def header_extractor(filepath, mode: str = 'richa'):
+    """
+    Function to extract the metadata either with richa or s1isp
+
+        mode (str): 'richa' or 's1isp'
+    """
+
+    if mode == 'richa':
+        meta = meta_extractor(filepath)
+    elif mode == 's1isp':
+        records, offsets, subcom_data_records = s1isp.decoder.decode_stream(
+        filepath,
+        # maxcount=6000,  # comment out this line to decode all the ISPs in the file
+        udf_decoding_mode=EUdfDecodingMode.NONE, # to have the corresponding signal data
+        )
+        headers_data = s1isp.decoder.decoded_stream_to_dict(records, enum_value=True)
+        meta = pd.DataFrame(headers_data)
+    
+    return meta    
 
 def decoder(inputfile):
     records, offsets, subcom_data_records = s1isp.decoder.decode_stream(

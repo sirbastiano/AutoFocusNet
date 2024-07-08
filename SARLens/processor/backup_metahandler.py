@@ -1,4 +1,4 @@
-from SRC import l0decoder
+from .SRC import l0decoder
 
 def meta_extractor(dat_filepath):
     """

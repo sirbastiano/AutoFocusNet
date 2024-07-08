@@ -157,6 +157,7 @@ class coarseRDA:
 
 
     @timing_decorator
+    @auto_gc
     def get_range_filter(self) -> np.ndarray:
         """
         Computes a range filter for radar data, specifically tailored to Sentinel-1 radar parameters.
@@ -167,22 +168,17 @@ class coarseRDA:
             3. It assumes that the metadata DataFrame has specific columns like 'Range Decimation', 'PRI', 'Rank', and 'SWST'.
 
         """
-        RGDEC = self.metadata["range_decimation"].unique()[0]
-        print('Getting Range Decimation:', RGDEC)
+        RGDEC = self.metadata["Range Decimation"].unique()[0]
         self.range_sample_freq = range_dec_to_sample_rate(RGDEC)
 
         # Nominal Replica Parameters
-        print('Getting Replica Parameters')
-        printmemory()
-        TXPSF = self.metadata["tx_pulse_start_freq"].unique()[0]
-        TXPRR = self.metadata["tx_ramp_rate"].unique()[0]
-        TXPL = self.metadata["tx_pulse_length"].unique()[0]
+        TXPSF = self.metadata["Tx Pulse Start Frequency"].unique()[0]
+        TXPRR = self.metadata["Tx Ramp Rate"].unique()[0]
+        TXPL = self.metadata["Tx Pulse Length"].unique()[0]
         num_tx_vals = int(TXPL*self.range_sample_freq)
         tx_replica_time_vals = np.linspace(-TXPL/2, TXPL/2, num=num_tx_vals)
-        printmemory()
         phi1 = TXPSF + TXPRR*TXPL/2
         phi2 = TXPRR/2
-        print('Calculating Tx Nominal replica')
         tx_replica = np.exp(2j * np.pi * (phi1*tx_replica_time_vals + phi2*tx_replica_time_vals**2))
 
         # Create range filter from replica pulse
@@ -195,12 +191,13 @@ class coarseRDA:
 
 
     @timing_decorator
+    @auto_gc
     def _compute_effective_velocities(self):
         # Tx pulse parameters
-        self.c = sentinel1decoder.constants.SPEED_OF_LIGHT_MPS
+        self.c = cnst.SPEED_OF_LIGHT_MPS
         self.PRI = self.metadata["PRI"].unique()[0]
         rank = self.metadata["Rank"].unique()[0]
-        suppressed_data_time = 320/(8*sentinel1decoder.constants.F_REF)
+        suppressed_data_time = 320/(8*cnst.F_REF)
         range_start_time = self.metadata["SWST"].unique()[0] + suppressed_data_time
         
 
@@ -217,11 +214,11 @@ class coarseRDA:
         self.slant_range_vec =((rank * self.PRI) + fast_time_vec) * self.c/2
         
         # Spacecraft velocity - numerical calculation of the effective spacecraft velocity
-        ecef_vels = self.ephemeris.apply(lambda x: math.sqrt(x["X-axis velocity ECEF"]**2 + x["Y-axis velocity ECEF"]**2 +x["Z-axis velocity ECEF"]**2), axis=1)
-        velocity_interp = interp1d(self.ephemeris["POD Solution Data Timestamp"].unique(), ecef_vels.unique(), fill_value="extrapolate")
-        x_interp = interp1d(self.ephemeris["POD Solution Data Timestamp"].unique(), self.ephemeris["X-axis position ECEF"].unique(), fill_value="extrapolate")
-        y_interp = interp1d(self.ephemeris["POD Solution Data Timestamp"].unique(), self.ephemeris["Y-axis position ECEF"].unique(), fill_value="extrapolate")
-        z_interp = interp1d(self.ephemeris["POD Solution Data Timestamp"].unique(), self.ephemeris["Z-axis position ECEF"].unique(), fill_value="extrapolate")
+        ecef_vels = self.ephemeris.apply(lambda x: math.sqrt(x["vx"]**2 + x["vy"]**2 +x["vz"]**2), axis=1)
+        velocity_interp = interp1d(self.ephemeris["time_stamp"].unique(), ecef_vels.unique(), fill_value="extrapolate")
+        x_interp = interp1d(self.ephemeris["time_stamp"].unique(), self.ephemeris["x"].unique(), fill_value="extrapolate")
+        y_interp = interp1d(self.ephemeris["time_stamp"].unique(), self.ephemeris["y"].unique(), fill_value="extrapolate")
+        z_interp = interp1d(self.ephemeris["time_stamp"].unique(), self.ephemeris["z"].unique(), fill_value="extrapolate")
         space_velocities = self.metadata.apply(lambda x: velocity_interp(x["Coarse Time"] + x["Fine Time"]), axis=1).to_numpy().astype(float)
 
         x_positions = self.metadata.apply(lambda x: x_interp(x["Coarse Time"] + x["Fine Time"]), axis=1).to_numpy().astype(float)
@@ -230,8 +227,8 @@ class coarseRDA:
 
         position_array = np.transpose(np.vstack((x_positions, y_positions, z_positions)))
 
-        a = sentinel1decoder.constants.WGS84_SEMI_MAJOR_AXIS_M
-        b = sentinel1decoder.constants.WGS84_SEMI_MINOR_AXIS_M
+        a = cnst.WGS84_SEMI_MAJOR_AXIS_M
+        b = cnst.WGS84_SEMI_MINOR_AXIS_M
         H = np.linalg.norm(position_array, axis=1)
         W = np.divide(space_velocities, H)
         lat = np.arctan(np.divide(position_array[:, 2], position_array[:, 0]))
@@ -248,6 +245,7 @@ class coarseRDA:
 
 
     @timing_decorator
+    @auto_gc
     def get_RCMC(self):
         """
         Calculate and return the RCMC filter for a given radar dataset.
@@ -260,7 +258,7 @@ class coarseRDA:
         """
         self._compute_effective_velocities()
         
-        self.wavelength = sentinel1decoder.constants.TX_WAVELENGTH_M
+        self.wavelength = cnst.TX_WAVELENGTH_M
         self.az_freq_vals = np.arange(-self.az_sample_freq/2, self.az_sample_freq/2, 1/(self.PRI*self.len_az_line))
         
         # Cosine of the instantanoeus squint angle
@@ -279,24 +277,28 @@ class coarseRDA:
     
     
     @timing_decorator
+    @auto_gc
     def ifft_rg(self):
         if self._backend == 'numpy':
             self.radar_data = np.fft.ifftshift(np.fft.ifft(self.radar_data, axis=1), axes=1)
     
     
     @timing_decorator
+    @auto_gc
     def ifft_az(self):
         if self._backend == 'numpy':
             self.radar_data = np.fft.ifft(self.radar_data, axis=0)
     
     
-    @timing_decorator 
+    @timing_decorator
+    @auto_gc 
     def get_azimuth_filter(self):
         az_filter = np.exp(4j * np.pi * self.slant_range_vec * self.D / self.wavelength)
         return az_filter
     
     
     @timing_decorator
+    @auto_gc
     def data_focus(self):
         """
         Performs the focusing of the raw data.
