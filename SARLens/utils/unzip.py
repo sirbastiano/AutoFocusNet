@@ -32,17 +32,10 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
-# get the current working directory
-wordir = os.environ["SARLENS_DIR"]
-
-# get the path to the zip files
-zip_dir = os.path.join(wordir, "Data")
-zip_dir = Path(zip_dir)
-
 def main(folder_path: str):
     folder_path = args.i
     print('Folder selected:', folder_path)
-    folder_path = Path(folder_path)
+    zip_dir = Path(folder_path)
     # get a list of all the zip files
     zipFiles = [x for x in zip_dir.glob(f'{folder_path}/**/*.zip') if x.is_file() and x.name.startswith("S1")]
     assert len(zipFiles) > 0, f"No zip files found in {zip_dir}"
