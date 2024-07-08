@@ -37,7 +37,9 @@ def main(folder_path: str):
     print('Folder selected:', folder_path)
     zip_dir = Path(folder_path)
     # get a list of all the zip files
-    zipFiles = [x for x in zip_dir.glob(f'/*.zip') if x.is_file() and x.name.startswith("S1")]
+    zipFiles = list(zip_dir.iterdir())
+    zipFiles = [x for x in zipFiles if x.is_file()]
+    zipFiles = [x for x in zipFiles if x.name.startswith("S1")]
     assert len(zipFiles) > 0, f"No zip files found in {zip_dir}"
     logger.info(f"Found {len(zipFiles)} zip files in {zip_dir}")
     
