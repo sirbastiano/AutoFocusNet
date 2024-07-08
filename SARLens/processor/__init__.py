@@ -9,8 +9,8 @@ try:
     SARLENS_DIR = config["DIRECTORIES"]["SARLENS_DIR"]
 except KeyError:
     config.read("../config.ini")
-    SARLENS_DIR = config["DIRECTORIES"]["SARLENS_DIR"]
-    
-    
+    SARLENS_DIR = os.getcwd()
+
+
 # Set environment variables
 os.environ["SARLENS_DIR"] = SARLENS_DIR
