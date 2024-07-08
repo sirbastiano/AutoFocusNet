@@ -1,0 +1,13 @@
+version: "2.4"
+
+services:
+  sarlib:
+    image: sarlib:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/workspace/
+    platform: linux/amd64
+
+    command: sleep infinity
