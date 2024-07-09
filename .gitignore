@@ -136,7 +136,6 @@ dmypy.json
 .pyre/
 
 # Folders
-DATA/*
 *.DS_Store
 
 # Configuration
@@ -147,3 +146,4 @@ DATA/*
 *.pdf
 
 s1isp
+Data/

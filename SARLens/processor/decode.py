@@ -3,6 +3,7 @@ import argparse
 import pickle
 import pandas as pd
 import numpy as np
+import os
 
 import s1isp
 from s1isp.decoder import decoded_subcomm_to_dict
@@ -111,6 +112,7 @@ if __name__ == '__main__':
     L0_name = Path(inputfile).stem
     
     output_folder = args.output
+    os.makedirs(output_folder, exist_ok=True)
     
     if inputfile is not None:
         print('Decoding Level 0 file...')

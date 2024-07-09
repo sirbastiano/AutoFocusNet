@@ -47,7 +47,7 @@ def main(folder_path: str):
         logger.info (f"Unzipping: {f}")
         with zipfile.ZipFile(f, 'r') as zip_ref:
             logger.info(f"Extracting {f} to {zip_dir}")
-            zip_ref.extractall(zip_dir / f.parent.stem)
+            zip_ref.extractall(zip_dir)
         
         # remove the zip file
         logger.info (f"Removing zipfile: {f}")

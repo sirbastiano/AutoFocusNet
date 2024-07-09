@@ -106,6 +106,8 @@ if __name__ == "__main__":
     parser.add_argument("--psw", help="ASF password", type=str, default=None)
     
     args = parser.parse_args()
+    # savedir
+    os.makedirs(args.out, exist_ok=True)
 
     if args.username is not None:
         username = args.username
@@ -121,7 +123,7 @@ if __name__ == "__main__":
     df = caller.search(max_res=args.max_res)
     df.to_excel(f'{args.out}/Searched_products.xlsx')
     
-    if args.download:
+    if args.download:        
         caller.download(username, psw, args.out)
     else:
         sys.exit(0)
