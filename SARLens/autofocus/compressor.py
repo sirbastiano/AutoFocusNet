@@ -11,7 +11,7 @@ import numpy as np
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 class estimate_V_eff(nn.Module):
-    def __init__(self, V_aux, patch_dim=(4096, 4096)):
+    def __init__(self, V_aux = 7900, patch_dim=(4096, 4096)):
         super().__init__()
         Vx, Vy, Vz = V_aux
         self.patch_dim = patch_dim
@@ -44,10 +44,6 @@ class estimate_D(nn.Module):
         az_sample_freq = 1 / PRI
         start = -az_sample_freq / 2
         end = az_sample_freq / 2
-        # --------------------    OLD      ------------------------------- 
-        # step = 1 / (PRI * len_az_line)
-        # self.f_eta = torch.arange(start=start, end=end, step=step, dtype=torch.float32)[start_idx:end_idx]
-        # ---------------------------------------------------------------- 
         self.f_eta = torch.linspace(start=start, end=end, steps=4096, dtype=torch.float32).to(device)
         
     def forward(self, V):

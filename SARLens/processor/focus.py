@@ -109,16 +109,18 @@ class coarseRDA:
         ######### Extraction of data
         self.radar_data = raw_data['echo']
         self.ephemeris = raw_data['ephemeris']
+        self.ephemeris['time_stamp'] /= 2**24
         self.metadata = raw_data['metadata']
         ######### Preliminary estimations
         self.len_range_line = self.radar_data.shape[1]
         self.len_az_line = self.radar_data.shape[0]
         if self._backend == 'torch':
             self.device = self.radar_data.device
+            print('Selected device:', self.device)
 
 
     @timing_decorator
-    def fft2D(self, executors=12):
+    def fft2D(self, w_pad=None, executors=12):
         # TODO: Test this function
         """
         Perform 2D FFT on a radar data array in range and azimuth dimensions.
@@ -134,7 +136,7 @@ class coarseRDA:
         if self._backend == 'numpy':
             self.radar_data = np.ascontiguousarray(self.radar_data)
             # FFT each range line
-            self.radar_data = np.fft.fft(self.radar_data, axis=1)
+            self.radar_data = np.fft.fft(self.radar_data, axis=1, n=w_pad)
             # FFT each azimuth line
             self.radar_data = np.fft.fftshift(np.fft.fft(self.radar_data, axis=0), axes=0)
         
@@ -142,10 +144,27 @@ class coarseRDA:
             self.radar_data = perform_fft_custom(self.radar_data, num_slices=executors)
             
         elif self._backend == 'torch':
+            def fft2D_in_chunks(radar_data, chunk_size):
+                radar_data = torch.tensor(radar_data, dtype=torch.complex64, device='cuda')
+                num_chunks = (radar_data.shape[0] + chunk_size - 1) // chunk_size
+                result = []
+                
+                for i in range(num_chunks):
+                    chunk = radar_data[i * chunk_size:(i + 1) * chunk_size, :]
+                    chunk_fft = torch.fft.fft(chunk, dim=1)
+                    chunk_fft = torch.fft.fftshift(torch.fft.fft(chunk_fft, dim=0), dim=0)
+                    result.append(chunk_fft)
+                
+                return torch.cat(result, dim=0)
+        
             # Convert radar_data to a PyTorch tensor and move to device
-            self.radar_data = torch.tensor(self.radar_data, dtype=torch.complex64, device=device)
+            # self.radar_data = torch.tensor(self.radar_data, dtype=torch.complex64, device=self.device)
             # FFT each range line
-            self.radar_data = torch.fft.fft(self.radar_data, dim=1)
+            if w_pad is not None:
+                self.radar_data = torch.fft.fft(self.radar_data, dim=1, n=self.radar_data.shape[1]+w_pad)
+            else:
+                self.radar_data = torch.fft.fft(self.radar_data, dim=1)
+                
             # FFT each azimuth line
             self.radar_data = torch.fft.fftshift(torch.fft.fft(self.radar_data, dim=0), dim=0)
             
@@ -158,7 +177,7 @@ class coarseRDA:
 
     @timing_decorator
     @auto_gc
-    def get_range_filter(self) -> np.ndarray:
+    def get_range_filter(self, pad_W) -> np.ndarray:
         """
         Computes a range filter for radar data, specifically tailored to Sentinel-1 radar parameters.
 
@@ -182,11 +201,14 @@ class coarseRDA:
         tx_replica = np.exp(2j * np.pi * (phi1*tx_replica_time_vals + phi2*tx_replica_time_vals**2))
 
         # Create range filter from replica pulse
-        range_filter = np.zeros(self.len_range_line, dtype=complex)
+        range_filter = np.zeros(self.len_range_line + pad_W, dtype=complex)
         index_start = np.ceil((self.len_range_line-num_tx_vals)/2)-1
         index_end = num_tx_vals+np.ceil((self.len_range_line-num_tx_vals)/2)-2
         range_filter[int(index_start):int(index_end+1)] = tx_replica
+        
+        # zero-pad the replica:
         range_filter = np.conjugate(np.fft.fft(range_filter))
+        # range_filter = np.roll(range_filter, self.len_range_line-num_tx_vals)
         return range_filter
 
 
@@ -281,14 +303,21 @@ class coarseRDA:
     def ifft_rg(self):
         if self._backend == 'numpy':
             self.radar_data = np.fft.ifftshift(np.fft.ifft(self.radar_data, axis=1), axes=1)
-    
+        elif self._backend == 'torch':
+                self.radar_data = torch.fft.ifft(self.radar_data, dim=1)
+                self.radar_data = torch.fft.ifftshift(self.radar_data, dim=1)
+        else:
+            raise ValueError("Unsupported backend. Choose 'numpy' or 'torch'.")
     
     @timing_decorator
     @auto_gc
     def ifft_az(self):
         if self._backend == 'numpy':
             self.radar_data = np.fft.ifft(self.radar_data, axis=0)
-    
+        elif self._backend == 'torch':
+                self.radar_data = torch.fft.ifft(self.radar_data, dim=0)
+        else:
+            raise ValueError("Unsupported backend. Choose 'numpy' or 'torch'.")
     
     @timing_decorator
     @auto_gc 
