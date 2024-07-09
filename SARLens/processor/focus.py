@@ -117,9 +117,13 @@ class coarseRDA:
         if self._backend == 'torch':
             self.device = self.radar_data.device
             print('Selected device:', self.device)
-
+        
+        ######### Prompting Replica:    
+        self._prompt_tx_replica()
+        
 
     @timing_decorator
+    @auto_gc
     def fft2D(self, w_pad=None, executors=12):
         # TODO: Test this function
         """
@@ -177,16 +181,7 @@ class coarseRDA:
 
     @timing_decorator
     @auto_gc
-    def get_range_filter(self, pad_W) -> np.ndarray:
-        """
-        Computes a range filter for radar data, specifically tailored to Sentinel-1 radar parameters.
-
-        Notes:
-            1. This function assumes that the Sentinel-1 specific constants are available through the 'sentinel1decoder.constants' module.
-            2. The function makes use of the scipy `interp1d` function to interpolate spacecraft velocities.
-            3. It assumes that the metadata DataFrame has specific columns like 'Range Decimation', 'PRI', 'Rank', and 'SWST'.
-
-        """
+    def _prompt_tx_replica(self):
         RGDEC = self.metadata["Range Decimation"].unique()[0]
         self.range_sample_freq = range_dec_to_sample_rate(RGDEC)
 
@@ -198,17 +193,33 @@ class coarseRDA:
         tx_replica_time_vals = np.linspace(-TXPL/2, TXPL/2, num=num_tx_vals)
         phi1 = TXPSF + TXPRR*TXPL/2
         phi2 = TXPRR/2
-        tx_replica = np.exp(2j * np.pi * (phi1*tx_replica_time_vals + phi2*tx_replica_time_vals**2))
+        self.num_tx_vals = num_tx_vals
+        self.tx_replica = np.exp(2j * np.pi * (phi1*tx_replica_time_vals + phi2*tx_replica_time_vals**2))
+        self.replica_len = len(self.tx_replica)
 
+
+    @timing_decorator
+    @auto_gc
+    def get_range_filter(self, pad_W = 0) -> np.ndarray:
+        """
+        Computes a range filter for radar data, specifically tailored to Sentinel-1 radar parameters.
+
+        Notes:
+            1. This function assumes that the Sentinel-1 specific constants are available through the 'sentinel1decoder.constants' module.
+            2. The function makes use of the scipy `interp1d` function to interpolate spacecraft velocities.
+            3. It assumes that the metadata DataFrame has specific columns like 'Range Decimation', 'PRI', 'Rank', and 'SWST'.
+
+        """        
+        tx_replica = self.tx_replica
+        
         # Create range filter from replica pulse
         range_filter = np.zeros(self.len_range_line + pad_W, dtype=complex)
-        index_start = np.ceil((self.len_range_line-num_tx_vals)/2)-1
-        index_end = num_tx_vals+np.ceil((self.len_range_line-num_tx_vals)/2)-2
+        index_start = np.ceil((self.len_range_line-self.num_tx_vals)/2)-1
+        index_end = self.num_tx_vals+np.ceil((self.len_range_line-self.num_tx_vals)/2)-2
         range_filter[int(index_start):int(index_end+1)] = tx_replica
         
         # zero-pad the replica:
         range_filter = np.conjugate(np.fft.fft(range_filter))
-        # range_filter = np.roll(range_filter, self.len_range_line-num_tx_vals)
         return range_filter
 
 
@@ -309,6 +320,7 @@ class coarseRDA:
         else:
             raise ValueError("Unsupported backend. Choose 'numpy' or 'torch'.")
     
+    
     @timing_decorator
     @auto_gc
     def ifft_az(self):
@@ -318,6 +330,7 @@ class coarseRDA:
                 self.radar_data = torch.fft.ifft(self.radar_data, dim=0)
         else:
             raise ValueError("Unsupported backend. Choose 'numpy' or 'torch'.")
+    
     
     @timing_decorator
     @auto_gc 
@@ -332,24 +345,33 @@ class coarseRDA:
         """
         Performs the focusing of the raw data.
         """
-        self.fft2D()
+        # Init
+        W_PAD = self.replica_len
+        H, original_W = self.radar_data.shape
+        
+        # Start Processing:
+        self.fft2D(w_pad=W_PAD)
         # RG compression
         self.radar_data = multiply(self.radar_data, 
-                                        self.get_range_filter())
-
+                                        self.get_range_filter(pad_W=W_PAD))
+        ########################
+        ## Remove padding
+        start_index = W_PAD // 2
+        end_index = start_index + original_W
+        self.radar_data = self.radar_data[:, start_index:end_index]
+        ########################
         # RCMC
         self.radar_data = multiply(self.radar_data, 
                                         self.get_RCMC())
         
-        # IFFT Range #TODO: address this in a backend manner for supporting torch
+        # IFFT Range
         self.ifft_rg()
         
         # Az Compression
         self.radar_data = multiply(self.radar_data, 
-                                    self.get_azimuth_filter())
+                                        self.get_azimuth_filter())
         
-        
-        # IFFT #TODO: address this in a backend manner for supporting torch
+        # IFFT
         self.ifft_az()
 
     @timing_decorator
@@ -361,6 +383,7 @@ def multiply(a, b):
     Multiplies two arrays a and b using the specified backend.
     """
     return a * b
+
         # if not isinstance(a, np.ndarray):
         #     raise ValueError("Array 'a' must be a numpy ndarray")
         # if not isinstance(b, np.ndarray):

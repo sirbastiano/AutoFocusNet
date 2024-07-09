@@ -8,11 +8,6 @@ import pickle
 import rasterio
 import xarray as xr
 
-import dask.array as da
-import datashader as ds
-from datashader import transfer_functions as tf
-import datashader.transfer_functions as tf
-
 try:
     import zarr 
 except:
@@ -39,58 +34,6 @@ def plot_with_cdf(img, figsize=(22, 22), savepath=None):
     plt.xlabel("Down Range (samples)")
     plt.ylabel("Cross Range (samples)")
     plt.colorbar()
-    if savepath is not None:
-        plt.savefig(savepath)
-    plt.show()
-
-
-def plot_with_dask(img, figsize=(22, 22), savepath=None):
-    """
-    Plots a large image using Dask and Datashader with a cumulative distribution function (CDF) for normalization.
-
-    Parameters:
-    img (ndarray): The input image array.
-    figsize (tuple): The size of the figure to plot.
-    savepath (str): The path to save the plotted image. If None, the image is not saved.
-
-    Returns:
-    None
-    """
-    # Convert the image to a NumPy array and ensure it is of type np.complex64
-    img_np = img.numpy().astype(np.complex64)
-    # Convert the image to a Dask array
-    img_dask = da.from_array(img_np, chunks=(1024, 1024))
-
-    # Compute the absolute value of the image
-    img_abs = da.abs(img_dask)
-
-    # Compute the percentiles for normalization
-    vmin, vmax = da.percentile(img_abs.flatten(), [25, 99]).compute()
-
-
-    # Convert the Dask array to an xarray.DataArray
-    img_xr = xr.DataArray(img_abs, dims=['y', 'x'])
-    # Create a datashader canvas
-    canvas = ds.Canvas(plot_width=img.shape[1], plot_height=img.shape[0])
-
-    # Rasterize the image
-    agg = canvas.raster(img_xr, interpolate='linear')
-
-    # Apply log normalization using Datashader
-    img_shaded = tf.shade(agg, cmap=plt.cm.gray, how='log')
-
-    # Convert the datashader image to a PIL image
-    img_pil = img_shaded.to_pil()
-
-    # Plotting using Matplotlib
-    plt.figure(figsize=figsize)
-    plt.title("Sentinel-1 Processed SAR Image")
-    plt.imshow(img_pil, origin='lower', norm=LogNorm(vmin=vmin, vmax=vmax))
-    plt.xlabel("Down Range (samples)")
-    plt.ylabel("Cross Range (samples)")
-    plt.colorbar()
-    
-    # Save the figure if a savepath is provided
     if savepath is not None:
         plt.savefig(savepath)
     plt.show()
