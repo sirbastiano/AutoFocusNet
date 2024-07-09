@@ -31,8 +31,6 @@ dependencies = [
     "scipy",
     "s1isp@git+https://github.com/sirbastiano/s1isp.git",
     "futures",
-    "dask",
-    "datashader",
 ]
 
 [tool.setuptools]
