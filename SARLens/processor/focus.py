@@ -373,6 +373,7 @@ class coarseRDA:
         
         # IFFT
         self.ifft_az()
+        printmemory()
 
     @timing_decorator
     def savefile(self, savepath):
